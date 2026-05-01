@@ -1,8 +1,9 @@
 "use client";
-
+import { IMAGE_MODELS, DEFAULT_IMAGE_MODEL, } from "@/lib/ai-models";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Sparkles, ImageIcon, Video, MessageSquareText } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,12 +19,18 @@ type ChatResponse = {
 };
 
 export default function HomePage() {
-  const [password, setPassword] = useState("");
   const [prompt, setPrompt] = useState("");
   const [answer, setAnswer] = useState("");
   const [meta, setMeta] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectModel, setSelectedModel] = useState(DEFAULT_CHAT_MODEL);
+  //画像生成系state//
+  const [imagePrompt, setImagePrompt] = useState("");
+  const [selectedImageModel, setSelectedImageModel] = useState(DEFAULT_IMAGE_MODEL);
+  const [generatedImageUrl, setGenerateImageUrl] = useState("");
+  const [imageMeta, setImageMeta] = useState("");
+  const [imageError, setImageError] = useState("");
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   async function handleSend() {
     setLoading(true);
@@ -59,6 +66,44 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleImageGenerate() {
+    try {
+      setIsGeneratingImage(true);
+      setImageError("");
+      setGenerateImageUrl("");
+      setImageMeta("");
+
+      const res = await fetch("/api/image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: imagePrompt,
+          model: selectedImageModel,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setImageError(data.error || "画像生成に失敗しました。");
+        return;
+      }
+
+      setGenerateImageUrl(data.imageurl);
+
+      if (data.model && data.latencyMs !== undefined) {
+        setImageMeta(`${data.model} / ${data.latencyMs}ms`);
+      }
+    } catch (error) {
+      console.error(error);
+      setImageError("通信エラーが発生しました。");
+    } finally {
+      setIsGeneratingImage(false);
+    }    
   }
 
   return (
@@ -189,11 +234,16 @@ export default function HomePage() {
                     desc="文章作成・相談・要約・コード補助"
                     active
                   />
+                  <Link 
+                  href="/image"
+                  className="block rounded-3x1 border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+                  >
                   <ModeCard
                     icon={<ImageIcon className="h-5 w-5" />}
                     title="Image Generate"
                     desc="次フェーズで実装"
                   />
+                  </Link>
                   <ModeCard
                     icon={<Video className="h-5 w-5" />}
                     title="Video Generate"
