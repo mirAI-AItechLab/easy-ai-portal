@@ -54,3 +54,36 @@ export function isImageModelId(model: unknown): model is ImageModelId {
         IMAGE_MODELS.some((item) => item.id === model)
     );
 }
+
+export const VIDEO_MODELS = [
+    {
+        id: "veo-3.1-lite-generate-preview",
+        name: "Veo 3.1 lite",
+        badge: "最新動画生成モデル",
+        description: "あのVeo 3.1を低遅延、かつ、低単価で生成可能です。",
+    },
+    {
+        id: "veo-3.1-fast-generate-preview",
+        name: "Veo 3.1 fast",
+        badge: "高速な動画生成モデル",
+        description: "低遅延型だが、Veo 3.1に近い精度を実現",
+    },
+    {
+        id: "veo-3.1-generate-preview",
+        name: "Veo 3.1",
+        badge: "超高性能動画生成モデル",
+        description: "王道を征く、Veo 3.1",
+    },
+
+] as const;
+
+export type VideoModelId = (typeof VIDEO_MODELS)[number]["id"];
+
+export const DEFAULT_VIDEO_MODEL: VideoModelId = "veo-3.1-fast-generate-preview";
+
+export function isVideoModelId(model: string): model is VideoModelId {
+    return (
+        typeof model === "string" &&
+        VIDEO_MODELS.some((item) => item.id === model)
+    );
+}

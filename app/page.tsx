@@ -236,19 +236,21 @@ export default function HomePage() {
                   />
                   <Link 
                   href="/image"
-                  className="block rounded-3x1 border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+                  className="block rounded-3xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
                   >
                   <ModeCard
                     icon={<ImageIcon className="h-5 w-5" />}
-                    title="Image Generate"
-                    desc="次フェーズで実装"
+                    title="画像生成"
+                    desc="最新のNano Bananaを使って画像を生成"
                   />
                   </Link>
+                  <Link href="/video">
                   <ModeCard
                     icon={<Video className="h-5 w-5" />}
-                    title="Video Generate"
-                    desc="Veo連携は次フェーズで実装"
+                    title="動画生成"
+                    desc="最新のVeo3.1で動画を生成"
                   />
+                  </Link>
                 </div>
               </CardContent>
             </Card>
