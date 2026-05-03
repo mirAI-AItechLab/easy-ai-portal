@@ -1,33 +1,53 @@
-import Link from "next/link";
-import { ImageGenerator } from "@/components/ImageGenerator";
+"use client";
+
+import { useState } from "react";
+import TextToImagePanel from "@/components/image/TextToImagePanel";
+import ImageToImagePanel from "@/components/image/ImageToImagePanel";
 
 export default function ImagePage() {
-    return (
-        <main className="min-h-screen bg-slate-950 px-4 py-8 text-white sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-5x1">
-                <div className="mb-8">
-                    <Link 
-                    href="/"
-                    className="mb-4 inline-flex text-sm text-slate-400 transition hover:text-white"
-                    >
-                        ←トップに戻る
-                    </Link>
+  const [mode, setMode] = useState<"text2img" | "img2img">("text2img");
 
-                    <div className="rounded-3x1 border border-white/10 bg-white/5 p-6 shadow-2x1">
-                    <p className="mb-2 text-sm text-fuchsia-300">Image Generate</p>
-                    <h1 className="text-3x1 font-bold tracking-tight sm:text-4x1">
-                        プロンプトから画像を生成
-                    </h1>
-                    <p className="mt-3 max-w-2x1 text-sm leading-relaxed text-slate-400">
-                        Geminiの画像生成モデルを使って、Webサイト素材、コンセプトビジュアル、SNS用画像などを生成できます。
-                    </p>
-                    </div>
-                </div>
+  return (
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-100">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm text-slate-400">Google系生成AI 簡易テストポータル</p>
+            <h1 className="text-2xl font-bold text-white">画像生成 / 画像編集</h1>
+            <p className="mt-2 text-sm text-slate-300">
+              テキストから画像生成、またはリファレンス画像を使った画像編集ができます。
+            </p>
+          </div>
+        </div>
 
-                <div className="rounded-3x1 border border-white/10 bg-slate-900/80 p-5 shadow-2x1">
-                <ImageGenerator />
-                </div>
-            </div>
-        </main>
-);
+        <div className="mb-6 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setMode("text2img")}
+            className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+              mode === "text2img"
+                ? "bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
+                : "border border-slate-600 bg-slate-800 text-slate-200 hover:border-amber-400 hover:text-amber-300"
+            }`}
+          >
+            Text2Img
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMode("img2img")}
+            className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+              mode === "img2img"
+                ? "bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20"
+                : "border border-slate-600 bg-slate-800 text-slate-200 hover:border-amber-400 hover:text-amber-300"
+            }`}
+          >
+            Img2Img
+          </button>
+        </div>
+
+        {mode === "text2img" ? <TextToImagePanel /> : <ImageToImagePanel />}
+      </div>
+    </main>
+  );
 }
