@@ -23,7 +23,7 @@ import {
 
 type ImagePreviewMap = Record<string, string>;
 
-const DEFAULT_MODEL = "gemini-2.5-flash-image";
+const DEFAULT_MODEL = "gemini-3.1-flash-image-preview";
 
 export default function ImagePage() {
   const [sessions, setSessions] = useState<ImageSession[]>([]);
@@ -337,14 +337,12 @@ export default function ImagePage() {
     <main className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-                                      <Link 
-                    href="/"
-                    className="mb-4 inline-flex text-sm text-slate-400 transition hover:text-white"
-                    >
-                        ←トップに戻る
-                    </Link>
-
-
+          <Link 
+          href="/"
+          className="mb-4 inline-flex text-sm text-slate-400 transition hover:text-white"
+          >
+            ←トップに戻る
+          </Link>
           <p className="text-sm text-gray-500">Image to Image</p>
           <h1 className="text-2xl font-bold">画像編集</h1>
           <p className="mt-2 text-sm text-gray-600">
