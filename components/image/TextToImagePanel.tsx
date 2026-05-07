@@ -12,7 +12,6 @@ export default function ImagePage() {
                     >
                         ←トップに戻る
                     </Link>
-
                     <div className="rounded-3x1 border border-white/10 bg-white/5 p-6 shadow-2x1">
                     <p className="mb-2 text-sm text-fuchsia-300">画像生成</p>
                     <h1 className="text-3x1 font-bold tracking-tight sm:text-4x1">

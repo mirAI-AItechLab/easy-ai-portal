@@ -128,3 +128,688 @@
     @apply font-sans;
   }
 }
+
+.flying-tanukis {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 
+  親要素は「画面を横断する大きな移動」だけ担当。
+  rotate / scaleX はここでは使わない。
+*/
+.tanuki-fly {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  will-change: transform;
+}
+
+/*
+  横断移動に重ねる、ふわふわした不規則な揺れ。
+  これを追加することで、直線的な飛行ルート感を減らす。
+*/
+.tanuki-drift {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  animation: tanukiDriftA 6.4s ease-in-out infinite;
+}
+
+.tanuki-2 .tanuki-drift {
+  animation-name: tanukiDriftB;
+  animation-duration: 7.8s;
+}
+
+.tanuki-3 .tanuki-drift {
+  animation-name: tanukiDriftC;
+  animation-duration: 7.1s;
+}
+
+/* たぬき画像本体 */
+.tanuki {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.86;
+  filter:
+    drop-shadow(0 0 18px rgba(56, 189, 248, 0.46))
+    drop-shadow(0 12px 30px rgba(15, 23, 42, 0.36));
+  animation: tanukiWobble 3.8s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+
+/* 右から左へ飛ぶ個体は、画像本体だけ左右反転 */
+.tanuki-3 .tanuki {
+  animation: tanukiWobbleReverse 4.1s ease-in-out infinite;
+}
+
+/*
+  軌跡。
+  直線の帯ではなく、ふわっとしたラメ雲に見えるように、
+  横長だが高さを持たせ、粒の配置を上下に散らす。
+*/
+.tanuki-trail {
+  position: absolute;
+  z-index: 1;
+  right: 38px;
+  top: 50%;
+  width: 180px;
+  height: 108px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.72;
+  filter:
+    blur(0.35px)
+    drop-shadow(0 0 8px rgba(125, 211, 252, 0.58))
+    drop-shadow(0 0 16px rgba(216, 180, 254, 0.38));
+
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 1) 0 1.7px, transparent 3.1px) 8px 18px / 22px 22px,
+    radial-gradient(circle, rgba(125, 211, 252, 0.96) 0 1.4px, transparent 2.8px) 30px 54px / 26px 26px,
+    radial-gradient(circle, rgba(216, 180, 254, 0.92) 0 1.25px, transparent 2.7px) 16px 82px / 30px 30px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.82) 0 1px, transparent 2.2px) 58px 34px / 36px 36px,
+    radial-gradient(circle, rgba(103, 232, 249, 0.72) 0 1px, transparent 2px) 78px 72px / 44px 44px;
+
+  -webkit-mask-image: radial-gradient(
+    ellipse at right center,
+    black 0%,
+    rgba(0, 0, 0, 0.78) 34%,
+    rgba(0, 0, 0, 0.42) 58%,
+    transparent 88%
+  );
+  mask-image: radial-gradient(
+    ellipse at right center,
+    black 0%,
+    rgba(0, 0, 0, 0.78) 34%,
+    rgba(0, 0, 0, 0.42) 58%,
+    transparent 88%
+  );
+
+animation:
+  sparkleTrailFlowIrregular 1.9s ease-in-out infinite,
+  trailFloatIrregular 4.7s ease-in-out infinite,
+  trailPulseIrregular 2.8s ease-in-out infinite;
+}
+
+/* 追加の細かいラメ */
+.tanuki-trail::before,
+.tanuki-trail::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 1) 0 1px, transparent 2px) 18px 20px / 23px 27px,
+    radial-gradient(circle, rgba(34, 211, 238, 0.85) 0 1px, transparent 2px) 6px 68px / 37px 31px,
+    radial-gradient(circle, rgba(192, 132, 252, 0.78) 0 1px, transparent 2px) 46px 46px / 41px 49px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.72) 0 0.9px, transparent 1.8px) 84px 26px / 53px 43px;
+  opacity: 0.62;
+  transform-origin: 65% 50%;
+  animation:
+    sparkleTwinkleIrregular 1.7s ease-in-out infinite,
+    sparkleScatterA 3.4s ease-in-out infinite;
+}
+
+.tanuki-trail::after {
+  transform: translateX(-14px) translateY(10px);
+  opacity: 0.42;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 1px, transparent 2.2px) 12px 72px / 29px 33px,
+    radial-gradient(circle, rgba(125, 211, 252, 0.78) 0 1px, transparent 2px) 38px 18px / 46px 39px,
+    radial-gradient(circle, rgba(216, 180, 254, 0.72) 0 1px, transparent 2px) 76px 58px / 35px 47px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.65) 0 0.8px, transparent 1.8px) 102px 34px / 57px 51px;
+  animation:
+    sparkleTwinkleIrregularB 2.1s ease-in-out infinite,
+    sparkleScatterB 4.1s ease-in-out infinite;
+}
+/* 左から右へ飛ぶ個体 */
+.tanuki-1 {
+  top: 10%;
+  left: -170px;
+  width: 72px;
+  height: 72px;
+  animation: flyTanuki1 15.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.tanuki-2 {
+  top: 63%;
+  left: -180px;
+  width: 56px;
+  height: 56px;
+  opacity: 0.78;
+  animation: flyTanuki2 20.5s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+  animation-delay: -6.5s;
+}
+
+.tanuki-2 .tanuki-trail {
+  right: 32px;
+  width: 138px;
+  height: 84px;
+  opacity: 0.58;
+}
+
+/* 右から左へ飛ぶ個体 */
+.tanuki-3 {
+  top: 34%;
+  right: -190px;
+  width: 88px;
+  height: 88px;
+  opacity: 0.82;
+  animation: flyTanuki3 23s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation-delay: -11s;
+}
+
+/* 右から左へ飛ぶ場合は軌跡を反対側に出す */
+.tanuki-3 .tanuki-trail {
+  right: auto;
+  left: 40px;
+  width: 195px;
+  height: 112px;
+  opacity: 0.7;
+  transform: translateY(-50%) scaleX(-1);
+}
+
+/* ラメの流れ。*/
+@keyframes sparkleTrailFlowIrregular {
+  0% {
+    background-position:
+      8px 18px,
+      30px 54px,
+      16px 82px,
+      58px 34px,
+      78px 72px;
+  }
+  17% {
+    background-position:
+      -8px 24px,
+      18px 45px,
+      4px 90px,
+      44px 22px,
+      70px 82px;
+  }
+  39% {
+    background-position:
+      -26px 14px,
+      -4px 62px,
+      -20px 74px,
+      28px 42px,
+      50px 64px;
+  }
+  61% {
+    background-position:
+      -18px 30px,
+      -30px 48px,
+      -38px 96px,
+      12px 26px,
+      34px 78px;
+  }
+  83% {
+    background-position:
+      -42px 18px,
+      -16px 70px,
+      -28px 68px,
+      -2px 46px,
+      18px 58px;
+  }
+  100% {
+    background-position:
+      -34px 18px,
+      -22px 54px,
+      -40px 82px,
+      4px 34px,
+      24px 72px;
+  }
+}
+
+@keyframes trailFloatIrregular {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  23% {
+    translate: -10px -7px;
+    rotate: -2deg;
+  }
+  47% {
+    translate: 5px 11px;
+    rotate: 1.6deg;
+  }
+  69% {
+    translate: -7px 3px;
+    rotate: -1deg;
+  }
+  86% {
+    translate: 4px -9px;
+    rotate: 2deg;
+  }
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+}
+
+@keyframes trailPulseIrregular {
+  0% {
+    opacity: 0.52;
+    scale: 0.96;
+  }
+  18% {
+    opacity: 0.78;
+    scale: 1.04;
+  }
+  36% {
+    opacity: 0.58;
+    scale: 0.98;
+  }
+  57% {
+    opacity: 0.82;
+    scale: 1.06;
+  }
+  79% {
+    opacity: 0.62;
+    scale: 1.01;
+  }
+  100% {
+    opacity: 0.52;
+    scale: 0.96;
+  }
+}
+
+@keyframes sparkleTwinkleIrregular {
+  0% {
+    opacity: 0.18;
+  }
+  19% {
+    opacity: 0.84;
+  }
+  37% {
+    opacity: 0.34;
+  }
+  58% {
+    opacity: 0.92;
+  }
+  76% {
+    opacity: 0.28;
+  }
+  100% {
+    opacity: 0.62;
+  }
+}
+
+@keyframes sparkleTwinkleIrregularB {
+  0% {
+    opacity: 0.42;
+  }
+  21% {
+    opacity: 0.16;
+  }
+  43% {
+    opacity: 0.76;
+  }
+  66% {
+    opacity: 0.28;
+  }
+  88% {
+    opacity: 0.82;
+  }
+  100% {
+    opacity: 0.42;
+  }
+}
+
+@keyframes sparkleScatterA {
+  0% {
+    translate: 0 0;
+    scale: 1;
+  }
+  24% {
+    translate: -7px -4px;
+    scale: 1.04;
+  }
+  49% {
+    translate: 3px 7px;
+    scale: 0.96;
+  }
+  73% {
+    translate: -11px 2px;
+    scale: 1.08;
+  }
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+@keyframes sparkleScatterB {
+  0% {
+    translate: -14px 10px;
+    scale: 0.98;
+  }
+  22% {
+    translate: -22px 4px;
+    scale: 1.08;
+  }
+  44% {
+    translate: -8px 16px;
+    scale: 0.94;
+  }
+  71% {
+    translate: -26px 11px;
+    scale: 1.04;
+  }
+  100% {
+    translate: -14px 10px;
+    scale: 0.98;
+  }
+}
+
+/* たぬき画像本体だけ軽く揺らす */
+@keyframes tanukiWobble {
+  0% {
+    transform: rotate(-8deg) scale(1);
+  }
+  33% {
+    transform: rotate(10deg) scale(1.05);
+  }
+  68% {
+    transform: rotate(-4deg) scale(0.98);
+  }
+  100% {
+    transform: rotate(-8deg) scale(1);
+  }
+}
+
+/* 右から左へ飛ぶ個体は、左右反転を維持したまま揺らす */
+@keyframes tanukiWobbleReverse {
+  0% {
+    transform: scaleX(-1) rotate(-8deg) scale(1);
+  }
+  33% {
+    transform: scaleX(-1) rotate(10deg) scale(1.05);
+  }
+  68% {
+    transform: scaleX(-1) rotate(-4deg) scale(0.98);
+  }
+  100% {
+    transform: scaleX(-1) rotate(-8deg) scale(1);
+  }
+}
+
+/*
+  大きな移動。
+  通過点を増やし、上下の揺れ幅をバラして、
+  直線移動っぽさを減らす。
+*/
+@keyframes flyTanuki1 {
+  0% {
+    transform: translate3d(-5vw, 4vh, 0);
+  }
+  13% {
+    transform: translate3d(11vw, -7vh, 0);
+  }
+  27% {
+    transform: translate3d(28vw, 10vh, 0);
+  }
+  42% {
+    transform: translate3d(45vw, -2vh, 0);
+  }
+  59% {
+    transform: translate3d(64vw, 14vh, 0);
+  }
+  76% {
+    transform: translate3d(86vw, -8vh, 0);
+  }
+  100% {
+    transform: translate3d(124vw, 6vh, 0);
+  }
+}
+
+@keyframes flyTanuki2 {
+  0% {
+    transform: translate3d(-6vw, 0, 0);
+  }
+  16% {
+    transform: translate3d(16vw, -17vh, 0);
+  }
+  35% {
+    transform: translate3d(34vw, -5vh, 0);
+  }
+  53% {
+    transform: translate3d(56vw, -29vh, 0);
+  }
+  73% {
+    transform: translate3d(81vw, -12vh, 0);
+  }
+  100% {
+    transform: translate3d(126vw, 5vh, 0);
+  }
+}
+
+@keyframes flyTanuki3 {
+  0% {
+    transform: translate3d(6vw, 0, 0);
+  }
+  15% {
+    transform: translate3d(-13vw, 13vh, 0);
+  }
+  32% {
+    transform: translate3d(-34vw, -8vh, 0);
+  }
+  51% {
+    transform: translate3d(-55vw, 18vh, 0);
+  }
+  70% {
+    transform: translate3d(-82vw, -11vh, 0);
+  }
+  100% {
+    transform: translate3d(-128vw, 8vh, 0);
+  }
+}
+
+/* ふわふわ不規則移動 */
+@keyframes tanukiDriftA {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  18% {
+    transform: translate3d(12px, -18px, 0);
+  }
+  41% {
+    transform: translate3d(-10px, 14px, 0);
+  }
+  67% {
+    transform: translate3d(16px, 8px, 0);
+  }
+  84% {
+    transform: translate3d(-6px, -10px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes tanukiDriftB {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  17% {
+    transform: translate3d(-14px, 12px, 0);
+  }
+  38% {
+    transform: translate3d(18px, -16px, 0);
+  }
+  62% {
+    transform: translate3d(-8px, -10px, 0);
+  }
+  81% {
+    transform: translate3d(10px, 18px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes tanukiDriftC {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  22% {
+    transform: translate3d(18px, 10px, 0);
+  }
+  45% {
+    transform: translate3d(-12px, -18px, 0);
+  }
+  72% {
+    transform: translate3d(8px, 16px, 0);
+  }
+  88% {
+    transform: translate3d(-14px, 4px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tanuki-fly,
+  .tanuki-drift,
+  .tanuki,
+  .tanuki-trail,
+  .tanuki-trail::before,
+  .tanuki-trail::after {
+    animation: none !important;
+  }
+}
+
+
+
+.sparkle {
+  position: absolute;
+  z-index: 1;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.9),
+    0 0 14px rgba(125, 211, 252, 0.65),
+    0 0 22px rgba(216, 180, 254, 0.35);
+  opacity: 0;
+  animation: sparklePuff 2.6s ease-in-out infinite;
+}
+
+/* 左から右に飛ぶ個体：後方は左側 */
+.tanuki-1 .sparkle,
+.tanuki-2 .sparkle {
+  left: 10px;
+  top: 50%;
+}
+
+/* 右から左に飛ぶ個体：後方は右側 */
+.tanuki-3 .sparkle {
+  left: auto;
+  right: 10px;
+  top: 50%;
+}
+
+/* 粒を一直線にせず、周囲へ散らす */
+.sparkle-1 {
+  transform: translate(-20px, -20px);
+  animation-delay: 0s;
+}
+
+.sparkle-2 {
+  width: 4px;
+  height: 4px;
+  transform: translate(-44px, 8px);
+  animation-delay: -0.4s;
+}
+
+.sparkle-3 {
+  width: 7px;
+  height: 7px;
+  transform: translate(-28px, 24px);
+  animation-delay: -0.9s;
+}
+
+.sparkle-4 {
+  width: 3px;
+  height: 3px;
+  transform: translate(-62px, -14px);
+  animation-delay: -1.3s;
+}
+
+.sparkle-5 {
+  width: 5px;
+  height: 5px;
+  transform: translate(-12px, 16px);
+  animation-delay: -1.8s;
+}
+
+.sparkle-6 {
+  width: 4px;
+  height: 4px;
+  transform: translate(-72px, 26px);
+  animation-delay: -2.2s;
+}
+
+/* 右から左の個体だけ、散る方向を逆にする */
+.tanuki-3 .sparkle-1 {
+  transform: translate(20px, -20px);
+}
+
+.tanuki-3 .sparkle-2 {
+  transform: translate(44px, 8px);
+}
+
+.tanuki-3 .sparkle-3 {
+  transform: translate(28px, 24px);
+}
+
+.tanuki-3 .sparkle-4 {
+  transform: translate(62px, -14px);
+}
+
+.tanuki-3 .sparkle-5 {
+  transform: translate(12px, 16px);
+}
+
+.tanuki-3 .sparkle-6 {
+  transform: translate(72px, 26px);
+}
+
+@keyframes sparklePuff {
+  0% {
+    opacity: 0;
+    scale: 0.4;
+    filter: blur(0px);
+  }
+  18% {
+    opacity: 0.95;
+    scale: 1;
+    filter: blur(0px);
+  }
+  46% {
+    opacity: 0.65;
+    scale: 1.25;
+    filter: blur(0.4px);
+  }
+  78% {
+    opacity: 0.18;
+    scale: 1.55;
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 0;
+    scale: 1.8;
+    filter: blur(1.4px);
+  }
+}

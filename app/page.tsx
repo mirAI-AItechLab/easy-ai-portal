@@ -1,145 +1,109 @@
-"use client";
-import { motion } from "motion/react";
-import { Sparkles, ImageIcon, Video, MessageSquareText } from "lucide-react";
+import { image } from "motion/react-client";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import { ChatPanel } from "@/components/ChatPanel";
 
-type ChatResponse = {
-  text?: string;
-  model?: string;
-  latencyMs?: number;
-  error?: string;
-};
+const modes = [
+  {
+    title: "チャット",
+    description: "相談・文章作成・要約・コード補助",
+    href: "/chat",
+    label: "AI チャット",
+    imageSrc: "/cards/chat.png"
+  },
+  {
+    title: "画像生成",
+    description: "テキスト→画像 / 画像編集",
+    href: "/image",
+    label: "画像生成 / 画像編集",
+    imageSrc: "/cards/image.png"
+  },
+  {
+    title: "動画生成",
+    description: "テキスト→動画 / 画像→動画",
+    href: "/video",
+    label: "動画生成",
+    imageSrc: "/cards/video.png"
+  },
+];
 
-export default function HomePage() {
-  //画像生成系state//
-
+export default function Home() {
   return (
-    <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
-      <div className="pointer-events-none fixed inset-0">
-        <div className="absolute left-[-80px] top-[-80px] h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
-        <div className="absolute right-[-100px] top-40 h-80 w-80 rounded-full bg-violet-500/20 blur-3xl" />
-        <div className="absolute bottom-[-120px] left-1/3 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
-      </div>
+    <main className="relative min-h-screen overflow-hidden text-white bg-slate-950">
+      <div className="animated-ai-bg" />
+      <FlyingTanukis />
 
-      <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8">
-        <header className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/10 shadow-2xl backdrop-blur">
-              <Sparkles className="h-5 w-5 text-cyan-300" />
-            </div>
-            <div>
-              <p className="text-sm text-cyan-300">NeuroRing</p>
-              <h1 className="text-lg font-semibold tracking-tight">
-                Google系生成AI 簡易テストポータル
-              </h1>
-            </div>
+      <section className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-16">
+        <div className="mb-10 max-w-3xl">
+          <div className="mb-4 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-slate-200 backdrop-blur-xl">
+            Google系生成AIプラットフォーム / NeuroRing
           </div>
 
-          <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
-            MVP v0.1
-          </div>
-        </header>
+          <h1 className="text-5xl font-bold tracking-tight md:text-7xl">
+            AI機能を、
+            <span className="block bg-gradient-to-r from-blue-300 via-cyan-200 to-purple-300 bg-clip-text text-transparent">
+              ひとつの入口から。
+            </span>
+          </h1>
 
-        <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-          >
-        <Card className="border-white/10 bg-white/10 text-white shadow-2xl backdrop-blur-xl">
-          <CardContent className="p-5 sm:p-6">
-            <ChatPanel />
-          </CardContent>
-        </Card>
-  
-         </motion.div>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+            チャット、画像生成、動画生成をまとめて使える簡易AIプラットフォームです。
+          </p>
+        </div>
 
-          <motion.aside
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.1 }}
-            className="space-y-4"
-          >
-            <Card className="border-white/10 bg-white/5 text-white backdrop-blur-xl">
-              <CardContent className="p-5">
-                <p className="mb-3 text-sm text-slate-300">Available Modes</p>
-                <div className="grid gap-3">
-                  <ModeCard
-                    icon={<MessageSquareText className="h-5 w-5" />}
-                    title="AI Chat"
-                    desc="文章作成・相談・要約・コード補助"
-                    active
-                  />
-                  <Link 
-                  href="/image"
-                  className="block rounded-3xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
-                  >
-                  <ModeCard
-                    icon={<ImageIcon className="h-5 w-5" />}
-                    title="画像生成"
-                    desc="最新のNano Bananaを使って画像を生成"
-                  />
-                  </Link>
-                  <Link href="/video">
-                  <ModeCard
-                    icon={<Video className="h-5 w-5" />}
-                    title="動画生成"
-                    desc="最新のVeo3.1で動画を生成"
-                  />
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="grid gap-5 md:grid-cols-3">
+          {modes.map((mode) => (
+            <Link
+              key={mode.href}
+              href={mode.href}
+              className="group rounded-3xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:bg-white/15"
+            >
+            <div className="relative mb-6 h-32 overflow-hidden rounded-2xl shadow-lg transition duration-300 group-hover:scale-[1.02]">
+              <img
+                src={mode.imageSrc}
+                alt=""
+                className="h-full w-full object-cover"
+              />
 
-            <Card className="border-cyan-300/20 bg-cyan-300/10 text-white backdrop-blur-xl">
-              <CardContent className="space-y-2 p-5 text-sm text-slate-200">
-                <p className="font-medium text-cyan-100">利用上の注意</p>
-                <p>個人情報・機密情報は入力しないでください。</p>
-                <p>生成結果は必ずしも正確ではありません。</p>
-                <p>動画生成はクレジットを多く消費するため後で制限します。</p>
-              </CardContent>
-            </Card>
-          </motion.aside>
-        </section>
-      </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+
+              <span className="absolute bottom-4 left-4 text-sm font-medium text-white/90">
+                {mode.label}
+              </span>
+            </div>
+              <h2 className="text-2xl font-semibold">{mode.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-300">
+                {mode.description}
+              </p>
+
+              <div className="mt-6 inline-flex items-center text-sm font-medium text-cyan-200">
+                開く
+                <span className="ml-1 transition group-hover:translate-x-1">
+                  →
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
 
-function ModeCard({
-  icon,
-  title,
-  desc,
-  active = false,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  active?: boolean;
-}) {
+function FlyingTanukis() {
   return (
-    <div
-      className={`rounded-2xl border p-4 ${
-        active
-          ? "border-cyan-300/30 bg-cyan-300/10"
-          : "border-white/10 bg-white/5"
-      }`}
-    >
-      <div className="flex items-start gap-3">
-        <div
-          className={`mt-0.5 ${
-            active ? "text-cyan-200" : "text-slate-400"
-          }`}
-        >
-          {icon}
+    <div className="flying-tanukis" aria-hidden="true">
+      {[1, 2, 3].map((num) => (
+        <div key={num} className={`tanuki-fly tanuki-${num}`}>
+          <div className="tanuki-drift">
+            <span className="sparkle sparkle-1" />
+            <span className="sparkle sparkle-2" />
+            <span className="sparkle sparkle-3" />
+            <span className="sparkle sparkle-4" />
+            <span className="sparkle sparkle-5" />
+            <span className="sparkle sparkle-6" />
+            <img src="/tanuki.png" className="tanuki" alt="" />
+          </div>
         </div>
-        <div>
-          <p className="font-medium">{title}</p>
-          <p className="mt-1 text-xs text-slate-400">{desc}</p>
-        </div>
-      </div>
+      ))}
     </div>
   );
 }

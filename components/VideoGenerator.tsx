@@ -184,12 +184,37 @@ export function VideoGenerator() {
                                     )}
                             </div>
 
-                            <video
-                                src={generatedVideoUrl}
-                                controls
-                                playsInline
-                                className="w-full rounded-2xl border border-white/10"
-                            />
+<video
+  key={generatedVideoUrl}
+  src={generatedVideoUrl}
+  controls
+  playsInline
+  preload="metadata"
+  className="w-full rounded-2xl border border-white/10"
+  onLoadedMetadata={(e) => {
+    console.log("video loaded metadata:", {
+      duration: e.currentTarget.duration,
+      src: e.currentTarget.currentSrc,
+    });
+  }}
+  onError={(e) => {
+    console.error("video load error:", e.currentTarget.error);
+  }}
+/>
+
+                            {generatedVideoUrl && (
+  <div className="mt-3 text-xs text-slate-400 break-all">
+    <a
+      href={generatedVideoUrl}
+      target="_blank"
+      rel="noreferrer"
+      className="text-cyan-300 underline"
+    >
+      動画URLを新しいタブで開く
+    </a>
+    <p className="mt-2">{generatedVideoUrl}</p>
+  </div>
+)}
                         </div>
                     )}
             </div>
